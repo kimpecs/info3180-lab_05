@@ -57,3 +57,19 @@ def movies():
             "description": form.description.data
         })
     return jsonify({"errors": form_errors(form)}), 400
+
+
+@app.route('/api/v1/movies', methods=['GET'])
+def get_movies():
+    movies = Movie.query.all()
+    return jsonify({
+        "movies": [
+            {
+                "id": movie.id,
+                "title": movie.title,
+                "description": movie.description,
+                "poster": f"/api/v1/posters/{movie.poster}"
+            } for movie in movies
+        ]
+    })
+    
