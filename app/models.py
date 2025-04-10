@@ -9,3 +9,7 @@ class Movie(db.Model):
     description = db.Column(db.Text, nullable=False)
     poster = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+     
+     
+    def set_poster_filename(self, filename):
+        self.poster = secure_filename(filename)

@@ -20,6 +20,12 @@
               <RouterLink to="/" class="nav-link active">Home</RouterLink>
             </li>
             <li class="nav-item">
+              <RouterLink class="nav-link" to="/movies">Browse Movies</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link" to="/movies/create">Add Movie</RouterLink>
+            </li>
+            <li class="nav-item">
               <RouterLink class="nav-link" to="/about">About</RouterLink>
             </li>
           </ul>
@@ -35,4 +41,8 @@ import { RouterLink } from "vue-router";
 
 <style>
 /* Add any component specific styles here */
+.nav-link.router-link-exact-active {
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-bottom: 2px solid white;
+}
 </style>

@@ -18,7 +18,8 @@ def create_app():
     
     # THEN create upload folder
     upload_folder = app.config['UPLOAD_FOLDER']
-    os.makedirs(upload_folder, exist_ok=True)
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder, exist_ok=True)
     
     # THEN initialize database
     db.init_app(app)

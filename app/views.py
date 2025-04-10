@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request, send_file, send_from_directory, current_app
+from flask import Blueprint, jsonify, render_template, request, send_file, send_from_directory, current_app, abort
 from app import db
 from app.models import Movie
 from app.forms import MovieForm
@@ -97,11 +97,21 @@ def get_movies():
             } for movie in movies
         ]
     })
-
 @bp.route('/api/v1/posters/<filename>')
 def get_poster(filename):
-    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
-
+    try:
+        # Use the configured UPLOAD_FOLDER directly
+        return send_from_directory(
+            current_app.config['UPLOAD_FOLDER'],
+            filename
+        )
+    except FileNotFoundError:
+        current_app.logger.error(f"File not found: {filename}")
+        abort(404)
+    except Exception as e:
+        current_app.logger.error(f"Error serving file {filename}: {str(e)}")
+        abort(500)
+        
 # ----------- Utility Functions -----------
 def form_errors(form):
     error_messages = []
