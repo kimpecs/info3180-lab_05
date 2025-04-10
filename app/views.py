@@ -31,3 +31,29 @@ def add_header(response):
 @bp.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
+
+@app.route('/api/v1/movies', methods=['POST'])
+def movies():
+    form = MovieForm()
+    if form.validate_on_submit():
+        # Save poster to uploads folder
+        poster = form.poster.data
+        filename = secure_filename(poster.filename)
+        poster.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        # Save to database
+        movie = Movie(
+            title=form.title.data,
+            description=form.description.data,
+            poster=filename
+        )
+        db.session.add(movie)
+        db.session.commit()
+
+        return jsonify({
+            "message": "Movie Successfully added",
+            "title": form.title.data,
+            "poster": filename,
+            "description": form.description.data
+        })
+    return jsonify({"errors": form_errors(form)}), 400
