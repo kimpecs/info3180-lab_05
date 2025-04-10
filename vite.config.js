@@ -11,12 +11,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
+      '^/api': {  // Match all paths starting with /api
         target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
-  },
+      }
+    }
+  }
 });
