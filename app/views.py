@@ -14,9 +14,19 @@ def index():
 
 @bp.route('/api/v1/movies', methods=['POST'])
 def add_movie():
+    print("\n=== REQUEST DATA ===")
+    print("Form Data:", request.form)
+    print("Files:", request.files)
+    print("CSRF Header:", request.headers.get('X-CSRFToken'))
+    print("CSRF Token:", generate_csrf())
+    print("=====================\n")
+    
+    
     form = MovieForm()
     
     # Debug print to see what data is being received
+    print("\nCSRF Token Received:", request.headers.get('X-CSRFToken'))
+    print("CSRF Token Expected:", generate_csrf())
     print("Form data received:", request.form)
     print("Files received:", request.files)
     
@@ -57,14 +67,23 @@ def add_movie():
             db.session.rollback()
             print("Error saving movie:", str(e))
             return jsonify({"errors": [f"Server error: {str(e)}"]}), 500
-    
-    # Return validation errors
-    return jsonify({"errors": form_errors(form)}), 400
+    else:
+        print("\nForm Validation Failed!")
+        print("Form Errors:", form_errors(form))
+        return jsonify({"errors": form_errors(form)}), 400
+   
+
 
 @bp.route('/api/v1/csrf-token', methods=['GET'])
-def get_csrf_token():
-    return jsonify({'csrf_token': generate_csrf()})
-
+def get_csrf():
+    try:
+        token = generate_csrf()
+        return jsonify({'csrf_token': token})
+    except Exception as e:
+        print("CSRF Generation Error:", str(e))
+        return jsonify({"error": "CSRF generation failed"}), 500
+    
+    
 @bp.route('/api/v1/movies', methods=['GET'])
 def get_movies():
     movies = Movie.query.all()
